@@ -1,1 +1,38 @@
-// TODO
+.header {
+margin: 5rem 0 1rem;
+}
+
+.post {
+  margin-top: 3.125rem;
+
+  cursor: pointer;
+
+  h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--heading);
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    font-size: 1.125rem;
+    margin-bottom: 1.5rem;
+  }
+
+  span {
+    color: var(--info);
+
+    & + span {
+      margin-left: 1.5rem;
+    }
+  }
+}
+
+.button {
+  margin-top: 4.125rem;
+  background: none;
+  border: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--highlight);
+}
