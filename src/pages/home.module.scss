@@ -9,6 +9,10 @@
 
   &:hover {
     transform: translateX(5px);
+
+    h1 {
+      color: var(--highlight);
+    }
   }
 
   h1 {
@@ -16,6 +20,7 @@
     font-weight: 700;
     color: var(--heading);
     margin-bottom: 0.5rem;
+    transition: 0.2s;
   }
 
   p {
@@ -46,4 +51,9 @@
   font-size: 1.125rem;
   font-weight: 600;
   color: var(--highlight);
+  transition: 0.2s;
+
+  &:hover {
+    filter: brightness(0.8);
+  }
 }
