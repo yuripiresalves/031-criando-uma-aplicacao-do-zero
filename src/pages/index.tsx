@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { getPrismicClient } from '../services/prismic';
 import Prismic from '@prismicio/client';
 import { format } from 'date-fns';
-import ptBr from 'date-fns/locale/pt-BR';
+import ptBR from 'date-fns/locale/pt-BR';
 
 import { FiCalendar, FiUser } from 'react-icons/fi';
 
@@ -44,7 +44,7 @@ export default function Home({ postsPagination }: HomeProps) {
         first_publication_date: format(
           new Date(post.first_publication_date),
           'dd MMM yyyy',
-          { locale: ptBr }
+          { locale: ptBR }
         ),
       };
     });
@@ -103,7 +103,7 @@ export const getStaticProps: GetStaticProps = async () => {
         new Date(post.first_publication_date),
         'dd MMM yyyy',
         {
-          locale: ptBr,
+          locale: ptBR,
         }
       ),
       data: {
