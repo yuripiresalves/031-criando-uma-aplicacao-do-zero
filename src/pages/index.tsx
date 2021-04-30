@@ -41,11 +41,7 @@ export default function Home({ postsPagination }: HomeProps) {
     const loadedPosts = json.results.map(post => {
       return {
         ...post,
-        first_publication_date: format(
-          new Date(post.first_publication_date),
-          'dd MMM yyyy',
-          { locale: ptBR }
-        ),
+        first_publication_date: post.first_publication_date,
       };
     });
 
@@ -61,14 +57,22 @@ export default function Home({ postsPagination }: HomeProps) {
 
       {posts.map(post => {
         return (
-          <Link href={`/post/${post.uid}`}>
-            <section key={post.uid} className={styles.post}>
+          <Link href={`/post/${post.uid}`} key={post.uid}>
+            <section className={styles.post}>
               <h1>{post.data.title}</h1>
               <p>{post.data.subtitle}</p>
 
               <div className={styles.info}>
                 <FiCalendar />
-                <time>{post.first_publication_date}</time>
+                <time style={{ textTransform: 'capitalize' }}>
+                  {format(
+                    new Date(post.first_publication_date),
+                    'dd MMM yyyy',
+                    {
+                      locale: ptBR,
+                    }
+                  )}
+                </time>
                 <FiUser />
                 <span>{post.data.author}</span>
               </div>
@@ -99,13 +103,7 @@ export const getStaticProps: GetStaticProps = async () => {
   const posts = postsResponse.results.map(post => {
     return {
       uid: post.uid,
-      first_publication_date: format(
-        new Date(post.first_publication_date),
-        'dd MMM yyyy',
-        {
-          locale: ptBR,
-        }
-      ),
+      first_publication_date: post.first_publication_date,
       data: {
         title: post.data.title,
         subtitle: post.data.subtitle,
@@ -121,5 +119,6 @@ export const getStaticProps: GetStaticProps = async () => {
 
   return {
     props: { postsPagination },
+    revalidate: 60 * 60 * 24, // 24 hours
   };
 };
