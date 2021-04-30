@@ -1,14 +1,16 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
+import { useRouter } from 'next/router';
 import Header from '../../components/Header';
 
 import { getPrismicClient } from '../../services/prismic';
+import Prismic from '@prismicio/client';
+import { RichText } from 'prismic-dom';
 import { format } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
+import { FiCalendar, FiClock, FiUser } from 'react-icons/fi';
 
 import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
-import { FiCalendar, FiClock, FiUser } from 'react-icons/fi';
-import { RichText } from 'prismic-dom';
 
 interface Post {
   first_publication_date: string | null;
@@ -32,6 +34,12 @@ interface PostProps {
 }
 
 export default function Post({ post }: PostProps) {
+  const router = useRouter();
+
+  if (router.isFallback) {
+    return <div>Carregando...</div>;
+  }
+
   return (
     <>
       <Header />
@@ -42,7 +50,11 @@ export default function Post({ post }: PostProps) {
           <h1>{post.data.title}</h1>
           <div className={styles.info}>
             <FiCalendar />
-            <time>{post.first_publication_date}</time>
+            <time style={{ textTransform: 'capitalize' }}>
+              {format(new Date(post.first_publication_date), 'dd MMM yyyy', {
+                locale: ptBR,
+              })}
+            </time>
             <FiUser />
             <span>{post.data.author}</span>
             <FiClock />
@@ -51,9 +63,13 @@ export default function Post({ post }: PostProps) {
 
           {post.data.content.map(section => {
             return (
-              <section className={styles.content}>
+              <section className={styles.content} key={section.heading}>
                 <h2>{section.heading}</h2>
-                <div dangerouslySetInnerHTML={{ __html: section.body }} />
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: RichText.asHtml(section.body),
+                  }}
+                />
               </section>
             );
           })}
@@ -64,12 +80,22 @@ export default function Post({ post }: PostProps) {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  // const prismic = getPrismicClient();
-  // const posts = await prismic.query(TODO);
+  const prismic = getPrismicClient();
+  const posts = await prismic.query([
+    Prismic.predicates.at('document.type', 'posts'),
+  ]);
+
+  const paths = posts.results.map(post => {
+    return {
+      params: {
+        slug: post.uid,
+      },
+    };
+  });
 
   return {
-    paths: [],
-    fallback: 'blocking',
+    paths,
+    fallback: true,
   };
 };
 
@@ -79,37 +105,28 @@ export const getStaticProps: GetStaticProps = async context => {
   const prismic = getPrismicClient();
   const response = await prismic.getByUID('posts', String(slug), {});
 
-  // console.log(response.data.content[0].body);
-
-  const content = response.data.content.map(item => {
-    return {
-      heading: item.heading,
-      body: RichText.asHtml(item.body),
-      // item.body.map(obj => obj.text)
-    };
-  });
-
-  // console.log(content);
-
   return {
     props: {
       post: {
-        first_publication_date: format(
-          new Date(response.first_publication_date),
-          'dd MMM yyyy',
-          {
-            locale: ptBR,
-          }
-        ),
+        first_publication_date: response.first_publication_date,
+        uid: response.uid,
         data: {
+          subtitle: response.data.subtitle,
           title: response.data.title,
           banner: {
             url: response.data.banner.url,
           },
           author: response.data.author,
-          content,
+          content: response.data.content.map(({ heading, body }) => {
+            return {
+              heading,
+              body: body,
+            };
+          }),
         },
+        // response,
       },
     },
+    revalidate: 60 * 60 * 24, // 24 hours
   };
 };
