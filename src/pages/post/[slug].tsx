@@ -1,5 +1,6 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
 import Header from '../../components/Header';
 
 import { getPrismicClient } from '../../services/prismic';
@@ -40,8 +41,24 @@ export default function Post({ post }: PostProps) {
     return <div>Carregando...</div>;
   }
 
+  const words = post.data.content.reduce((acc, curr) => {
+    const headingWords = curr.heading.split(/\s/g).length;
+    const bodyWords = curr.body.reduce((acc, curr) => {
+      const textWords = curr.text.split(/\s/g).length;
+
+      return acc + textWords;
+    }, 0);
+
+    return acc + headingWords + bodyWords;
+  }, 0);
+
+  const readTime = Math.ceil(words / 200);
+
   return (
     <>
+      <Head>
+        <title>{post.data.title} | spacetraveling.</title>
+      </Head>
       <Header />
       <img src={post.data.banner.url} alt="" className={styles.banner} />
 
@@ -58,7 +75,7 @@ export default function Post({ post }: PostProps) {
             <FiUser />
             <span>{post.data.author}</span>
             <FiClock />
-            <time>4 min</time>
+            <time>{readTime} min</time>
           </div>
 
           {post.data.content.map(section => {
@@ -124,7 +141,6 @@ export const getStaticProps: GetStaticProps = async context => {
             };
           }),
         },
-        // response,
       },
     },
     revalidate: 60 * 60 * 24, // 24 hours
