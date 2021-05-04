@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { GetStaticProps } from 'next';
 import Link from 'next/link';
+import Head from 'next/head';
 import { getPrismicClient } from '../services/prismic';
 import Prismic from '@prismicio/client';
 import { format } from 'date-fns';
@@ -51,6 +52,10 @@ export default function Home({ postsPagination }: HomeProps) {
 
   return (
     <div className={commonStyles.mainContainer}>
+      <Head>
+        <title>Home | spacetraveling.</title>
+      </Head>
+
       <header className={styles.header}>
         <img src="/Logo.svg" alt="logo" />
       </header>
