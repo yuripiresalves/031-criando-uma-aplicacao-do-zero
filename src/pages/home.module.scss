@@ -3,9 +3,16 @@
 }
 
 .post {
+  display: block;
   margin-top: 3.125rem;
   cursor: pointer;
+  text-decoration: none;
+  color: var(--body);
   transition: 0.2s;
+
+  &:last-child {
+    margin-bottom: 3.125rem;
+  }
 
   &:hover {
     transform: translateX(5px);
@@ -46,6 +53,7 @@
 
 .button {
   margin-top: 4.125rem;
+  margin-bottom: 3.125rem;
   background: none;
   border: 0;
   font-size: 1.125rem;
