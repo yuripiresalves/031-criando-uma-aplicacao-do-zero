@@ -60,7 +60,9 @@ export default function Post({ post }: PostProps) {
         <title>{post.data.title} | spacetraveling.</title>
       </Head>
       <Header />
-      <img src={post.data.banner.url} alt="" className={styles.banner} />
+      {post.data.banner && (
+        <img src={post.data.banner.url} alt="" className={styles.banner} />
+      )}
 
       <main className={commonStyles.mainContainer}>
         <article className={styles.post}>
