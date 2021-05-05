@@ -63,7 +63,7 @@ export default function Home({ postsPagination }: HomeProps) {
       {posts.map(post => {
         return (
           <Link href={`/post/${post.uid}`} key={post.uid}>
-            <section className={styles.post}>
+            <a className={styles.post}>
               <h1>{post.data.title}</h1>
               <p>{post.data.subtitle}</p>
 
@@ -81,7 +81,7 @@ export default function Home({ postsPagination }: HomeProps) {
                 <FiUser />
                 <span>{post.data.author}</span>
               </div>
-            </section>
+            </a>
           </Link>
         );
       })}
@@ -124,6 +124,6 @@ export const getStaticProps: GetStaticProps = async () => {
 
   return {
     props: { postsPagination },
-    revalidate: 60 * 60 * 24, // 24 hours
+    // revalidate: 60 * 60 * 24, // 24 hours
   };
 };
