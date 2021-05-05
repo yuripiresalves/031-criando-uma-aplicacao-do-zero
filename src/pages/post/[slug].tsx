@@ -60,7 +60,7 @@ export default function Post({ post }: PostProps) {
         <title>{post.data.title} | spacetraveling.</title>
       </Head>
       <Header />
-      {post.data.banner && (
+      {post.data.banner.url && (
         <img src={post.data.banner.url} alt="" className={styles.banner} />
       )}
 
